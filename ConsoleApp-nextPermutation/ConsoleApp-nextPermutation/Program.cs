@@ -18,22 +18,22 @@ namespace ConsoleApp1_K
                     {
                         isAnotherNumber = false;
                         continue;
-                    } 
+                    }
                     else
                     {
                         if (ascii == 45) isNegative = true;
                         continue;
-                    } 
-                } 
+                    }
+                }
 
                 int number = ascii - '0';
-                
+
                 if (number > 9 || number < 0)
                 {
                     throw new FormatException();
-                } 
+                }
                 else
-                {            
+                {
                     isChanged = true;
                     result = result * 10 + number;
                 }
@@ -110,10 +110,11 @@ namespace ConsoleApp1_K
                     Console.Write(array[i]);
                     Console.Write(" ");
                 }
+                
                 for (int j = n-1; j > pivotIdx; j--)
                 {
                     Console.Write(array[j]);
-                    if (pivotIdx+1 != j)
+                    if (pivotIdx != j - 1)
                     {
                         Console.Write(" ");
                     }

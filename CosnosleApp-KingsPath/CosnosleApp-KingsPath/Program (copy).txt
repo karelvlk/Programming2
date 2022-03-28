@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections;
+using System.IO;
+
+namespace ConsoleApp_KingsPath
+{
+    class Position
+    {
+        int x_;
+        int y_;
+        int n_;
+
+        public Position(int x, int y, int n)
+        {
+            x_ = x;
+            y_ = y;
+            n_ = n;
+        }
+
+        public int getX()
+        {
+            return x_;
+        }
+
+        public int getY()
+        {
+            return y_;
+        }
+
+        public int getN()
+        {
+            return n_;
+        }
+    }
+
+    class Program
+    {
+        static string[,] grid;
+        static int[,] tGrid;
+        static int[] start = new int[2];
+        static int[] finish = new int[2];
+        static int width;
+        static int height;
+
+        public static string ReadAnotherValue()
+        {
+            string result = "";
+            for (bool isAnotherNumber = true; isAnotherNumber == true;)
+            {
+                int ascii = Console.Read();
+                if (ascii == ' ' || ascii == 10 || ascii == 13)
+                {
+                    continue;
+                }
+
+                isAnotherNumber = false;     
+                result = (char)ascii + "";                
+            }
+
+            return result;
+        }
+
+        static int findKingsPath()
+        {
+            Queue<Position> queue = new Queue<Position>();
+            queue.Enqueue(new Position(start[0], start[1], 1));
+
+            while (queue.Count > 0)
+            {
+                Position pos = (Position)queue.Dequeue();
+
+                for (int i = -1; i <= 1; i++)
+                {
+                    for (int j = -1; j <= 1; j++)
+                    {
+                        int x = pos.getX() + i;
+                        int y = pos.getY() + j;
+                        int n = pos.getN();
+                        bool xCondition = (0 <= x) && (x < width);
+                        bool yCondition = (0 <= y) && (y < width);
+                        if (xCondition && yCondition)
+                        {
+                            if (tGrid[x, y] == -1 || tGrid[x, y] > n)
+                            {
+                                if (grid[x, y] == "." || grid[x, y] == "C")
+                                {
+                                    tGrid[x, y] = n;
+                                    queue.Enqueue(new Position(x, y, n + 1));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return tGrid[finish[0], finish[1]];
+        }
+
+        static void Main(string[] args)
+        {
+            
+            string[] lines = System.IO.File.ReadAllLines("./sachovnice.txt");
+            for (int l = 0; l < lines.Length; l++)
+            {
+                if (l == 0)
+                {
+                    Int32.TryParse(lines[l], out width);
+                }
+                else if (l == 1)
+                {
+                    Int32.TryParse(lines[l], out height);
+                    grid = new string[width, height];
+                    tGrid = new int[width, height];
+                }
+                else
+                {
+                    char[] arr = lines[l].ToCharArray();
+                    for (int i = 0; i < width; i++)
+                    {
+                        string letter = (char)arr[i] + "";
+                        grid[i, l - 2] = letter;
+                        if (letter == "C")
+                        {
+                            finish[0] = i;
+                            finish[1] = l-2;
+                        }
+                        if (letter == "S")
+                        {
+                            start[0] = i;
+                            start[1] = l - 2;
+                        }
+                        tGrid[i, l-2] = -1;
+                    }
+                }
+            }
+            Console.WriteLine(findKingsPath());
+        }
+    }
+}
+
+

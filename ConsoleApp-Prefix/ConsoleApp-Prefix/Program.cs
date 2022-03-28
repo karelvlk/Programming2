@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleApp3_K
+namespace ConsoleApp_Prefix
 {
     class Program
     {
@@ -55,61 +55,6 @@ namespace ConsoleApp3_K
             }
         }
 
-        static bool IsPerfect(int number)
-        {
-            if (number < 0) number *= -1;
-            int sum = 0;
-            for(int i = 1; i <= (number / 2) + 1; i++)
-            {
-                if (number % i == 0)
-                {
-                    sum += i;
-                }
-            }
-
-            if (number == sum)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        static bool IsSquare(int number)
-        {
-            if (number < 0) return false;
-            double sqrt = Math.Sqrt(number);
-            
-            if (sqrt % 1 == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        static bool IsCubic(int number)
-        {
-            if (number < 0)
-            {
-                number *= -1;
-            }
-
-            double cbrt = Math.Cbrt(number);
-            if (cbrt % 1 == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         static void Main(string[] args)
         {
             try
@@ -129,7 +74,7 @@ namespace ConsoleApp3_K
                 if (IsCubic(number))
                 {
                     Console.Write("K");
-                }               
+                }
             }
             catch (FormatException)
             {
