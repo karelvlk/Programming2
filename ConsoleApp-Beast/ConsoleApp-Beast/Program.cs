@@ -60,6 +60,7 @@ namespace ConsoleApp_Beast
         Beast beast;
         int width;
         int height;
+
         public World(string[,] grid, Beast beast, int width, int height)
         {
             this.grid = grid;
@@ -68,9 +69,9 @@ namespace ConsoleApp_Beast
             this.height = height;
         }
 
-        public string[,] GetGrid()
+        public string GetGridValue(int x, int y)
         {
-            return grid;
+            return grid[x, y];
         }
 
         public Beast GetBeast()
@@ -108,12 +109,12 @@ namespace ConsoleApp_Beast
 
         public int[] GetPosition()
         {
-            return position;
+            return new int[] { position[0], position[1] };
         }
 
         public int[] GetDirection()
         {
-            return direction;
+            return new int[] { direction[0], direction[1] };
         }
     }
 
@@ -172,6 +173,7 @@ namespace ConsoleApp_Beast
     class Printer
     {
         World world;
+
         public Printer(World world)
         {
             this.world = world;
@@ -206,7 +208,7 @@ namespace ConsoleApp_Beast
                     }
                     else
                     {
-                        Console.Write(world.GetGrid()[w, h]);
+                        Console.Write(world.GetGridValue(w, h));
                     }
                 }
                 Console.Write("\n");
@@ -217,6 +219,7 @@ namespace ConsoleApp_Beast
     class Mover
     {
         World world;
+
         public Mover(World world)
         {
             this.world = world;
@@ -226,7 +229,7 @@ namespace ConsoleApp_Beast
         {
             if ((0 <= x && x < world.GetWidth()) && (0 <= y && y < world.GetHeight()))
             {
-                return world.GetGrid()[x, y];
+                return world.GetGridValue(x, y);
             }
             else
             {
