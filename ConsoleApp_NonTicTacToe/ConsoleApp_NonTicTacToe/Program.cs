@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Threading;
 
 namespace ConsoleApp_NonTicTacToe
 {
-    class Reader
+    // Abstract class Reader is created like interface because in the future
+    // there can be added more options to read from (from file etc.) without
+    // modifying the whole script
+    abstract class Reader
     {
-        public virtual string ReadLine()
-        {
-            return "";
-        }
+        public abstract string ReadLine();
+
     }
+
     class ConsoleReader : Reader
     {
         public override string ReadLine()
@@ -18,27 +19,31 @@ namespace ConsoleApp_NonTicTacToe
         }
     }
 
-    class GridCreator
+    class Grid
     {
-        string[,] grid = new string[3,3];
         int Xs = 0;
         int Os = 0;
-        public void CreateNewGrid(string[] lines)
+        string[,] grid = new string[3,3];
+
+        public void FillFromLines(string[] lines)
         {
             Xs = 0;
-            Os = 0; 
+            Os = 0;
 
-            if (lines.Length > 0)
+            if (lines.Length >= 3)
             {
                 for (int h = 0; h < 3; h++)
                 {
-                    for (int w = 0; w < 3; w++)
+                    if (lines[h].Length >=3)
                     {
-                        string letter = lines[h][w].ToString();
-                        if (letter == "X") Xs++;
-                        if (letter == "O") Os++;
-                        grid[w, h] = letter;
-                        
+                        for (int w = 0; w < 3; w++)
+                        {
+                            string letter = lines[h][w].ToString();
+                            if (letter == "x") Xs++;
+                            if (letter == "o") Os++;
+                            grid[w, h] = letter;
+
+                        }
                     }
                 }
             } 
@@ -53,33 +58,26 @@ namespace ConsoleApp_NonTicTacToe
                 }
             }
         }
+    
 
-        public string[,] GetGrid()
+        public int GetXs()
         {
-            return this.grid;
+            return this.Xs;
         }
 
-        public void SetLetterToPosition(int[] position, string letter)
+        public int GetOs()
         {
-            if (letter == "X") Xs++;
-            if (letter == "O") Os++;
-            this.grid[position[0], position[1]] = letter;
+            return this.Os;
         }
 
-        public int GetMaxRounds()
+        public void SetLetterToPosition(int[] position, string letter, bool temp)
         {
-            return 9 - Xs - Os;
-        }
-
-        public string WhosTurn()
-        {
-            if ((Xs - Os) == 0)
+            if (!temp)
             {
-                return "X";
-            } else
-            {
-                return "O";
+                if (letter == "x") Xs++;
+                if (letter == "o") Os++;
             }
+            this.grid[position[0], position[1]] = letter;
         }
 
         public string GetLetterOnPosition(int[] position)
@@ -90,101 +88,232 @@ namespace ConsoleApp_NonTicTacToe
 
     class GridLogic
     {
-        public string WhosTrio(string[,] grid) //returns "N" if there is no trio or "X"/"O" if some player has trio
+        Grid grid;
+
+        public void SetLetterToPosition(int[] pos, string letter, bool temp)
+        {
+            this.grid.SetLetterToPosition(pos, letter, temp);
+        }
+
+        public int GetMaximumRoundLeft()
+        {
+            return 9 - grid.GetXs() - grid.GetOs();
+        }
+
+        public string GetWhosTurn()
+        {
+            if (this.grid.GetXs() == grid.GetOs())
+            {
+                return "x"; // if Xs == Os it means that first player is on move => X
+            }
+            else
+            {
+                return "o";
+            }
+        }
+        
+        public void SetGrid(Grid grid)
+        {
+            this.grid = grid;
+        }
+
+        string GetPosInfo(int x, int y)
+        {
+            if (0 <= x && x <= 2 && 0 <= x && x <= 2)
+            {
+                int[] pos = { x, y };
+                return grid.GetLetterOnPosition(pos);
+            }
+            else
+            {
+                return "?";
+            }
+        }
+        public string GetWhoWins() //returns "N" if there is no trio or "X"/"O" if some player has trio
         {
             //horizontal trios
             for (int width = 0; width < 3; width++)
             {
-                if (grid[width, 0] == grid[width, 1] && grid[width, 1] == grid[width, 2])
+                if (GetPosInfo(width, 0) == GetPosInfo(width, 1) && GetPosInfo(width, 1) == GetPosInfo(width, 2))
                 {
-                    if (grid[width, 0] != ".")
+                    string trioLetter = GetPosInfo(width, 0); // letter that is in trio (three of them next to each other)
+                    if (trioLetter != "." && trioLetter != "?")
                     {
-                        return grid[width, 0];
+                        if (trioLetter == "x")
+                        {
+                            return "o"; // wins who force other to create trio
+                        }
+                        else
+                        {
+                            return "x";
+                        }
                     }
                 }
             }
 
-            //horizontal trios
+            //vertical trios
             for (int height = 0; height < 3; height++)
             {
-                if (grid[0, height] == grid[1, height] && grid[1, height] == grid[2, height])
+                if (GetPosInfo(0, height) == GetPosInfo(1, height) && GetPosInfo(1, height) == GetPosInfo(2, height))
                 {
-                    if (grid[0, height] != ".")
+                    string trioLetter = GetPosInfo(0, height); // letter that is in trio (three of them next to each other)
+                    if (trioLetter != "." && trioLetter != "?")
                     {
-                        return grid[0, height];
+                        if (trioLetter == "x")
+                        {
+                            return "o"; // wins who force other to create trio
+                        }
+                        else
+                        {
+                            return "x";
+                        }
                     }
                 }
             }
 
             //diagonal trios
 
-            if (grid[1, 1] == grid[2, 2] && grid[2, 2] == grid[0, 0])
+            if (GetPosInfo(1, 1) == GetPosInfo(2, 2) && GetPosInfo(2, 2) == GetPosInfo(0, 0))
             {
-                if (grid[0, 0] != ".")
+                string trioLetter = GetPosInfo(0, 0); // letter that is in trio (three of them next to each other)
+                if (trioLetter != "." && trioLetter != "?")
                 {
-                    return grid[0, 0];
+                    if (trioLetter == "x")
+                    {
+                        return "o"; // wins who force other to create trio
+                    }
+                    else
+                    {
+                        return "x";
+                    }
                 }
             }
 
-            return "N";
+            // second diagonal
+            if (GetPosInfo(0, 2) == GetPosInfo(1, 1) && GetPosInfo(1, 1) == GetPosInfo(2, 0))
+            {
+                string trioLetter = GetPosInfo(1, 1); // letter that is in trio (three of them next to each other)
+                if (trioLetter != "." && trioLetter != "?")
+                {
+                    if (trioLetter == "x")
+                    {
+                        return "o"; // wins who force other to create trio
+                    }
+                    else
+                    {
+                        return "x";
+                    }
+                }
+            }
+
+            return "N"; // nobody
         }
-        public int GetTrioValue(string[,] grid, string player)
+
+        public int GetChanceToBeWinner(string player)
         {
-            string trioLetter = this.WhosTrio(grid);
-            if (trioLetter == "N") // nobody has trio
+            string winner = this.GetWhoWins();
+            if (winner == "N") // nobody is winner
             {
                 return 0;
             }
-            else if (trioLetter == player) // current player has trio => current player LOSS
+            else if (winner == player)
             {
-                return -10;
+                return 100;
             }
-            else // opponent has trio => current player WIN
+            else
             {
-                return 10;
+                return -100;
             }
         }
 
-        public bool IsFreeSpace(string[,] grid)
+        public bool IsFreeSpace()
         {
             for (int h = 0; h < 3; h++)
             {
                 for (int w = 0; w < 3; w++)
                 {
-                    if (grid[w, h] == ".") return true;
+                    if (GetPosInfo(w, h) == ".") return true;
                 }
             }
 
             return false;
         }
-        public int ProcessMinimax(string[,] grid, string player,  bool isMax)
+
+        public int ProcessMinimax(string player,  bool isMax)
         {
-            int value = this.GetTrioValue(grid, player);
-            if (value != 0) return value;
-            if (this.IsFreeSpace(grid)) 
+            int value = this.GetChanceToBeWinner(player);
+            if (value != 0)
             {
-                int best = 10; // initialized that it is always overwritten
-                if (isMax) best = -10; // initialized that it is always overwritten
+               return value;
+            }
+            int best = 0;
+            if (this.IsFreeSpace()) 
+            {
+                /*
+                int best = 100; // initialized that it is always overwritten
+                if (isMax) best = -100; // initialized that it is always overwritten
                 for (int h = 0; h < 3; h++)
                 {
                     for (int w = 0; w < 3; w++)
                     {
-                        if (grid[w, h] == ".")
+                        if (GetPosInfo(w, h) == ".")
                         {
-                            grid[w, h] = player; // make current player move
-                            string nextPlayer = "X";
-                            if (player == "X") nextPlayer = "O";
-                            best = Math.Max(best, this.ProcessMinimax(grid, nextPlayer, !isMax));
-                            grid[w, h] = "."; // remove current player move to try another one
+                            int[] position = { w, h };
+                            this.SetLetterToPosition(position, player, true); // make current player move
+                            string nextPlayer = "x";
+                            if (player == "x") nextPlayer = "o";
+                            if (isMax)
+                            {
+                                best = Math.Max(best, this.ProcessMinimax(nextPlayer, !isMax, depth + 1));
+                            }
+                            else
+                            {
+                                best = Math.Min(best, this.ProcessMinimax(nextPlayer, !isMax, depth + 1));
+                            }
+                            this.SetLetterToPosition(position, ".", true); // remove current player move to try another one
                         }
                     }
                 }
                 return best;
+                */
+                if (isMax)
+                {
+                    best = -100;
+                    for (int h = 0; h < 3; h++)
+                    {
+                        for (int w = 0; w < 3; w++)
+                        {
+                            if (GetPosInfo(w, h) == ".")
+                            {
+                                int[] position = { w, h };
+                                this.SetLetterToPosition(position, "x", true); // make current player move
+                                best = Math.Max(best, this.ProcessMinimax("o", !isMax));
+                                this.SetLetterToPosition(position, ".", true); // remove current player move to try another one
+                            }
+                        }
+                    }
+                } else
+                {
+                    best = 100;
+                    for (int h = 0; h < 3; h++)
+                    {
+                        for (int w = 0; w < 3; w++)
+                        {
+                            if (GetPosInfo(w, h) == ".")
+                            {
+                                int[] position = { w, h };
+                                this.SetLetterToPosition(position, "o", true); // make current player move
+                                best = Math.Min(best, this.ProcessMinimax("x", !isMax));
+                                this.SetLetterToPosition(position, ".", true); // remove current player move to try another one
+                            }
+                        }
+                    }
+                }
             }
-            return 0;
+            return best;
         }
 
-        public int[] FindBestMove(string[,] grid, string currentPlayer)
+        public int[] FindBestMove(string currentPlayer)
         {
             int bestValue = -int.MaxValue;
             int[] bestMove = { -1, -1 }; //no move 
@@ -193,12 +322,13 @@ namespace ConsoleApp_NonTicTacToe
             {
                 for (int w = 0; w < 3; w++)
                 {
-                    if (grid[w, h] == ".")
+                    if (GetPosInfo(w, h) == ".")
                     {
-                        grid[w, h] = currentPlayer; // try current player move
-                        int val = this.ProcessMinimax(grid, currentPlayer, false);
-                        grid[w, h] = "."; // remove current player move to try different one
-                        if (val > bestValue)
+                        int[] position = { w, h };
+                        this.SetLetterToPosition(position, currentPlayer, true); // try current player move
+                        int val = this.ProcessMinimax(currentPlayer, false);
+                        this.SetLetterToPosition(position, ".", true); // remove current player move to try different one
+                        if (val >= bestValue)
                         {
                             bestValue = val;
                             bestMove[0] = w;
@@ -212,29 +342,31 @@ namespace ConsoleApp_NonTicTacToe
         } 
     }
 
-
     class Analyzer
     {
         int numberOfGrids = 0;
         string result = "";
-        GridCreator gridCreator = new GridCreator();
+        Reader reader;
+        Grid grid = new Grid();
         GridLogic gridLogic = new GridLogic();
+
         public Analyzer(int num, Reader reader)
         {
             this.numberOfGrids = num;
-            this.StartAnalyzing();
             this.result = "";
+            this.reader = reader;
         }
 
-        void StartAnalyzing()
+        public void StartAnalyzing()
         {
             for (int i = 0; i < this.numberOfGrids; i++)
             {
                 this.CreateGrid();
+                this.gridLogic.SetGrid(grid);
                 this.AnalyzeCurrentGrid();
             }
             
-            Console.WriteLine(this.result);
+            Console.WriteLine(this.result.ToUpper());
         }
 
         void CreateGrid()
@@ -242,33 +374,27 @@ namespace ConsoleApp_NonTicTacToe
             string[] lines = new string[3];
             for (int i = 0; i < 3;)
             {
-                string line = Console.ReadLine();
+                string line = this.reader.ReadLine();
                 if (line != null && line != "")
                 {
                     lines[i] = line;
                     i++;
                 } 
             }
-            gridCreator.CreateNewGrid(lines);
+            grid.FillFromLines(lines);
         }
 
         void AnalyzeCurrentGrid()
         {
-            int maxRounds = this.gridCreator.GetMaxRounds();
+            int maxRounds = this.gridLogic.GetMaximumRoundLeft();
             for (int i = 0; i < maxRounds; i++)
             {
-                int[] nextMove = gridLogic.FindBestMove(this.gridCreator.GetGrid(), this.gridCreator.WhosTurn());
-                this.gridCreator.SetLetterToPosition(nextMove, this.gridCreator.WhosTurn());
-                string whosTrio = gridLogic.WhosTrio(this.gridCreator.GetGrid());
-                if (whosTrio != "N") {
-                    if (whosTrio == "X")
-                    {
-                        result += "O";
-                    } 
-                    else
-                    {
-                        result += "X";
-                    }
+                string playerOnTurn = this.gridLogic.GetWhosTurn();
+                int[] nextMove = gridLogic.FindBestMove(playerOnTurn);
+                this.gridLogic.SetLetterToPosition(nextMove, playerOnTurn, false);
+                string winner = this.gridLogic.GetWhoWins();
+                if (winner != "N") {
+                    result += winner;
                     return;
                 }
             }
@@ -279,124 +405,126 @@ namespace ConsoleApp_NonTicTacToe
     class Game
     {
         string playerLetter;
-        GridCreator gridCreator = new GridCreator();
+        Reader reader;
+        Grid grid = new Grid();
         GridLogic gridLogic = new GridLogic();
         Printer printer;
-        public Game(string playerLetter)
+
+        public Game(string playerLetter, Reader reader)
         {
             this.playerLetter = playerLetter;
-            this.StartGame();
+            this.reader = reader;
         }
 
         void ProcessInput(string line)
         {
             if (line.Length >= 2)
             {
-                if (line[0] >= 49 && line[0] <= 51 && line[1] >= 49 && line[1] <= 51) // check if input is in range line[0-1] => 1-3
+                int x = line[0] - '0' - 1;
+                int y = line[1] - '0' - 1;
+                if (0 <= x && x <= 2 && 0 <= y && y <= 2) // checks if input x and y is in range 0-2
                 {
-                    int[] pos = { line[0]-'0'-1, line[1]-'0'-1 };
-                    if (gridCreator.GetLetterOnPosition(pos) == ".")
+                    int[] pos = { x, y };
+                    if (grid.GetLetterOnPosition(pos) == ".")
                     {
-                        gridCreator.SetLetterToPosition(pos, this.playerLetter);
+                        gridLogic.SetLetterToPosition(pos, this.playerLetter, false);
                         return;
                     }
                 }
             }
             Console.WriteLine("ERROR: BAD INPUT!");
         }
-        void StartGame()
+
+        public void StartGame()
         {
-            string loser = "N";
-            gridCreator.CreateNewGrid(new string[0]);
-            printer = new ConsolePrinter(gridCreator.GetGrid());
+            string winner = "N";
+            grid.FillFromLines(new string[0]);
+            gridLogic.SetGrid(this.grid);
+            printer = new ConsolePrinter();
+            printer.SetGrid(this.grid);
             printer.PrintGameHelper();
+
             for (int i = 0; i < 9; i++) // process all moves 
             {
-                string whosTurn = this.gridCreator.WhosTurn();
+                string whosTurn = this.gridLogic.GetWhosTurn();
                 printer.PrintGrid();
                 if (whosTurn == this.playerLetter)
                 {
                     printer.PrintWhosTurn(whosTurn, false);
-                    string input = Console.ReadLine();
+                    string input = this.reader.ReadLine();
                     this.ProcessInput(input);
                 } 
                 else
                 {
                     printer.PrintWhosTurn(whosTurn, true);
-                    int[] nextMove = gridLogic.FindBestMove(this.gridCreator.GetGrid(), this.gridCreator.WhosTurn());
-                    this.gridCreator.SetLetterToPosition(nextMove, this.gridCreator.WhosTurn());
+                    int[] nextMove = gridLogic.FindBestMove(whosTurn);
+                    this.gridLogic.SetLetterToPosition(nextMove, whosTurn, false);
                     
                 }
 
-                string whosTrio = gridLogic.WhosTrio(this.gridCreator.GetGrid());
-                if (whosTrio != "N")
+                winner = gridLogic.GetWhoWins();
+                if (winner != "N")
                 {
-                    loser = whosTrio;
                     break;
                 }
             }
-            this.ProcessEnd(loser);
+            this.ProcessEnd(winner);
         }
 
-        void ProcessEnd(string loser)
+        void ProcessEnd(string winner)
         {
             this.printer.PrintGrid();
-            if (loser == "N")
+            if (winner == "N")
             {
                 Console.WriteLine("+---------------------------------------------+");
                 Console.WriteLine("| IT IS TIE! YOU HAVE TO TRY HARDER NEXT TIME!|");
                 Console.WriteLine("+---------------------------------------------+");
-            } else if (loser == this.playerLetter) {
-                Console.WriteLine("+---------------------------------------------+");
-                Console.WriteLine("| YOU LOST! YOU HAVE TO TRY HARDER NEXT TIME! |");
-                Console.WriteLine("+---------------------------------------------+");
-                Console.WriteLine("P.S. hahaha loooser");
-                Console.WriteLine("Your Bob xxx");
-            } else
+            } 
+            else if (winner == this.playerLetter) 
             {
                 Console.WriteLine("+---------------------------------------------+");
                 Console.WriteLine("| YOU WIN! GOOJ JOB U R LEGEND, YOU BEAT BOB! |");
                 Console.WriteLine("+---------------------------------------------+");
             }
+            else
+            {
+                Console.WriteLine("+---------------------------------------------+");
+                Console.WriteLine("| YOU LOST! YOU HAVE TO TRY HARDER NEXT TIME! |");
+                Console.WriteLine("+---------------------------------------------+");
+                Console.WriteLine("P.S. hahaha loooser");
+                Console.WriteLine("Your Bob xxx");
+            }
         }
     }
 
-    class Printer
+    // Abstract class Printer is created like interface because in the future
+    // there can be added more options to print to (file etc.) without modifying
+    // the whole script
+    abstract class Printer
     {
-        string[,] grid;
-        public Printer(string[,] grid)
+        Grid grid;
+
+        public void SetGrid(Grid grid)
         {
             this.grid = grid;
         }
 
-        public string[,] GetGrid()
+        public string GetLetterOnPosition(int x, int y)
         {
-            return this.grid;
+            int[] pos = { x, y };
+            return this.grid.GetLetterOnPosition(pos);
         }
 
-        public virtual void PrintGameHelper()
-        {
+        public abstract void PrintGameHelper();
 
-        }
+        public abstract void PrintGrid();
 
-        public virtual void PrintGrid()
-        {
+        public abstract void PrintWhosTurn(string letter, bool isBobs);
 
-        }
-
-        public virtual void PrintWhosTurn(string letter, bool isBobs)
-        {
-
-        }
     }
 
     class ConsolePrinter : Printer
     {
-        public ConsolePrinter(string[,] grid) : base (grid)
-        {
-            
-        }
-
         public override void PrintGrid()
         {
             Console.WriteLine();
@@ -404,7 +532,7 @@ namespace ConsoleApp_NonTicTacToe
             {
                 for (int w = 0; w < 3; w++)
                 {
-                    Console.Write(this.GetGrid()[w, h]);
+                    Console.Write(this.GetLetterOnPosition(w, h));
                 }
                 Console.Write("\n");
             }
@@ -416,7 +544,7 @@ namespace ConsoleApp_NonTicTacToe
             Console.WriteLine("+---------------------------------------------+");
             Console.WriteLine("|       Welcome to the Non-Tic-Tac-Toe        |");
             Console.WriteLine("+---------------------------------------------+");
-            Console.WriteLine("| My name is Bob nad I will play against you  |");
+            Console.WriteLine("| My name is Bob and I will play against you  |");
             Console.WriteLine("| How to play:                                |");
             Console.WriteLine("| As soon as it's your turn you should write  |");
             Console.WriteLine("| idx of position you want to set your letter |");
@@ -453,17 +581,19 @@ namespace ConsoleApp_NonTicTacToe
 
     class Program
     {
-        private static ConsoleReader reader;
+        private static Reader reader;
         static public void ProcessControlLine(string line)
         {
             bool isNumber = Int32.TryParse(line, out int num);
             if (isNumber)
             {
-                new Analyzer(num, reader);
+                Analyzer analyzer = new Analyzer(num, reader);
+                analyzer.StartAnalyzing();
             }
-            else if (line.Length > 0 && (line[0] ==  'X' || line[0] == 'O')) // if control line contains X or O
+            else if (line.Length > 0 && (line[0] ==  'x' || line[0] == 'o')) // if control line contains X or O
             {
-                new Game(line[0].ToString());
+                Game game = new Game(line[0].ToString(), reader); //param: empty [] of line 
+                game.StartGame();
             }
         }
         static void Main(string[] args)
