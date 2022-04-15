@@ -38,6 +38,7 @@ namespace WindowsFormsApp_Pexeso
             this.you = new System.Windows.Forms.Label();
             this.youScore = new System.Windows.Forms.Label();
             this.opponentScore = new System.Windows.Forms.Label();
+            this.endLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.arrowLabel)).BeginInit();
             this.SuspendLayout();
@@ -45,7 +46,7 @@ namespace WindowsFormsApp_Pexeso
             // heading
             // 
             this.heading.BackColor = System.Drawing.Color.Yellow;
-            this.heading.Font = new System.Drawing.Font("Yu Gothic UI", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.heading.Font = new System.Drawing.Font("Agency FB", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.heading.ForeColor = System.Drawing.Color.Fuchsia;
             this.heading.Location = new System.Drawing.Point(364, 15);
             this.heading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -58,7 +59,7 @@ namespace WindowsFormsApp_Pexeso
             // startButton
             // 
             this.startButton.BackColor = System.Drawing.Color.Cyan;
-            this.startButton.Font = new System.Drawing.Font("Yu Gothic UI", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.startButton.Font = new System.Drawing.Font("Agency FB", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.startButton.ForeColor = System.Drawing.Color.DarkOrange;
             this.startButton.Location = new System.Drawing.Point(364, 467);
             this.startButton.Margin = new System.Windows.Forms.Padding(4);
@@ -73,7 +74,7 @@ namespace WindowsFormsApp_Pexeso
             // numericUpDown
             // 
             this.numericUpDown.BackColor = System.Drawing.Color.OrangeRed;
-            this.numericUpDown.Font = new System.Drawing.Font("Yu Gothic UI", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.numericUpDown.Font = new System.Drawing.Font("Agency FB", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.numericUpDown.Location = new System.Drawing.Point(364, 140);
             this.numericUpDown.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDown.Maximum = new decimal(new int[] {
@@ -87,7 +88,7 @@ namespace WindowsFormsApp_Pexeso
             0,
             0});
             this.numericUpDown.Name = "numericUpDown";
-            this.numericUpDown.Size = new System.Drawing.Size(300, 71);
+            this.numericUpDown.Size = new System.Drawing.Size(300, 65);
             this.numericUpDown.TabIndex = 2;
             this.numericUpDown.Value = new decimal(new int[] {
             2,
@@ -108,7 +109,7 @@ namespace WindowsFormsApp_Pexeso
             // opponent
             // 
             this.opponent.BackColor = System.Drawing.Color.DodgerBlue;
-            this.opponent.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.opponent.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opponent.Location = new System.Drawing.Point(808, 55);
             this.opponent.Name = "opponent";
             this.opponent.Padding = new System.Windows.Forms.Padding(2);
@@ -120,7 +121,7 @@ namespace WindowsFormsApp_Pexeso
             // you
             // 
             this.you.BackColor = System.Drawing.Color.Orange;
-            this.you.Font = new System.Drawing.Font("Yu Gothic UI Semibold", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.you.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.you.Location = new System.Drawing.Point(12, 55);
             this.you.Name = "you";
             this.you.Padding = new System.Windows.Forms.Padding(2);
@@ -132,7 +133,7 @@ namespace WindowsFormsApp_Pexeso
             // youScore
             // 
             this.youScore.BackColor = System.Drawing.Color.DarkOrange;
-            this.youScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.youScore.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.youScore.Location = new System.Drawing.Point(277, 15);
             this.youScore.Name = "youScore";
             this.youScore.Padding = new System.Windows.Forms.Padding(20);
@@ -144,7 +145,7 @@ namespace WindowsFormsApp_Pexeso
             // opponentScore
             // 
             this.opponentScore.BackColor = System.Drawing.Color.RoyalBlue;
-            this.opponentScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.opponentScore.Font = new System.Drawing.Font("Agency FB", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opponentScore.Location = new System.Drawing.Point(671, 15);
             this.opponentScore.Name = "opponentScore";
             this.opponentScore.Padding = new System.Windows.Forms.Padding(20);
@@ -153,12 +154,25 @@ namespace WindowsFormsApp_Pexeso
             this.opponentScore.Text = "0";
             this.opponentScore.Visible = false;
             // 
+            // endLabel
+            // 
+            this.endLabel.BackColor = System.Drawing.Color.BlueViolet;
+            this.endLabel.Font = new System.Drawing.Font("Agency FB", 72F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.endLabel.Location = new System.Drawing.Point(280, 263);
+            this.endLabel.Name = "endLabel";
+            this.endLabel.Size = new System.Drawing.Size(471, 377);
+            this.endLabel.TabIndex = 8;
+            this.endLabel.Text = "YOU WIN!";
+            this.endLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.endLabel.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LawnGreen;
             this.ClientSize = new System.Drawing.Size(1059, 1147);
+            this.Controls.Add(this.endLabel);
             this.Controls.Add(this.opponentScore);
             this.Controls.Add(this.youScore);
             this.Controls.Add(this.you);
@@ -180,7 +194,7 @@ namespace WindowsFormsApp_Pexeso
 
         #endregion
 
-        private System.Windows.Forms.Label heading;
+        public System.Windows.Forms.Label heading;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.NumericUpDown numericUpDown;
         private System.Windows.Forms.PictureBox arrowLabel;
@@ -188,6 +202,7 @@ namespace WindowsFormsApp_Pexeso
         private System.Windows.Forms.Label you;
         private System.Windows.Forms.Label youScore;
         private System.Windows.Forms.Label opponentScore;
+        private System.Windows.Forms.Label endLabel;
     }
 }
 

@@ -38,7 +38,7 @@ namespace ConsoleApp_NonTicTacToe
                     {
                         for (int w = 0; w < 3; w++)
                         {
-                            string letter = lines[h][w].ToString();
+                            string letter = lines[w][h].ToString();
                             if (letter == "x") Xs++;
                             if (letter == "o") Os++;
                             grid[w, h] = letter;
