@@ -56,19 +56,22 @@ namespace WindowsFormsApp_Pexeso
             return this.heading;
         }
     }
+
     class GameGenerator
     {
         Form form;
         Game game;
         int pairs = 0;
+
         public GameGenerator(Form form, Game game)
         {
             this.form = form;
             this.game = game;
         }
+
         List<string> GenerateColors(int numberOfPairs)
         {
-            string[] colors = new string[]{
+            string[] colors = new string[]{ //list of colors that are recognisable by human eye
                 "#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
                 "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
                 "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
@@ -132,8 +135,8 @@ namespace WindowsFormsApp_Pexeso
             int pow = getClosest2Power(numberOfPairs * 2);
             List<string> colors = GenerateColors(numberOfPairs);
             Random rnd = new Random();
-            Entity[] entityList = new Entity[numberOfPairs*2];
-            for (int i = 0; i < numberOfPairs * 2; i++)
+            Entity[] entityList = new Entity[numberOfPairs*2]; // empty Entity array
+            for (int i = 0; i < numberOfPairs * 2; i++) // generate entity grid (based on closest power to 2)
             {
                 if (left == pow)
                 {
@@ -203,7 +206,7 @@ namespace WindowsFormsApp_Pexeso
             ((Form1)this.form).GetHeading().Text = "PEXESO";
         }
 
-        public void ProcessClick(string color, Entity entity) // player click
+        public void ProcessClick(Entity entity) // player click
         {
             if (pairsLeft == 0)
             {
@@ -217,10 +220,10 @@ namespace WindowsFormsApp_Pexeso
                 }
                 else
                 {
-                    this.secondPicked = firstPicked;
+                    this.secondPicked = this.firstPicked;
                     this.firstPicked = entity;
 
-                    timer.Interval = 2000;
+                    timer.Interval = 2000; // waits because you as a player need to take time to remember
                     timer.Enabled = true;
                     timer.Tick += HandleTimerYou;
                 }
@@ -247,8 +250,8 @@ namespace WindowsFormsApp_Pexeso
             }
             else
             {
-                this.firstPicked.TurnBackSideUp();
-                this.secondPicked.TurnBackSideUp();
+                this.firstPicked.TurnBackSideUp(); // hides entity color 
+                this.secondPicked.TurnBackSideUp(); // hides entity color 
 
                 this.firstPicked = null;
                 this.secondPicked = null;
@@ -268,21 +271,21 @@ namespace WindowsFormsApp_Pexeso
                 ((Form1)this.form).GetHeading().Text = "BOB'S TURN";
                 Random rnd = new Random();
                 this.pickID = -1;
-                while (this.pickID == -1 || !this.entityList[this.pickID].IsVisible())
+                while (this.pickID == -1 || !this.entityList[this.pickID].IsVisible()) // Bob is trying to pick until picked entity is available
                 {
                     this.pickID = rnd.Next(entityList.Length - 1);
                 }
                 this.firstPicked = this.entityList[this.pickID];
-                this.firstPicked.TurnUpSideUp();
+                this.firstPicked.TurnUpSideUp(); // shows entity color 
 
                 this.pickID2 = -1;
-                while (this.pickID2 == -1 || !this.entityList[this.pickID2].IsVisible() || this.pickID == this.pickID2)
+                while (this.pickID2 == -1 || !this.entityList[this.pickID2].IsVisible() || this.pickID == this.pickID2) // Bob is trying to pick until picked entity is available
                 {
                     this.pickID2 = rnd.Next(entityList.Length);
                 }
 
                 this.secondPicked = this.entityList[this.pickID2];
-                this.secondPicked.TurnUpSideUp();
+                this.secondPicked.TurnUpSideUp(); // shows entity color 
 
                 timer.Interval = 2000;
                 timer.Enabled = true;
@@ -320,9 +323,6 @@ namespace WindowsFormsApp_Pexeso
                 this.pickID2 = -1;
                 this.ProcessYourTurn();
             }
-            //this.pickID = -1;
-            //firstPicked = null;
-            //secondPicked = null;
             this.ProcessYourTurn();
         }
 
@@ -330,7 +330,7 @@ namespace WindowsFormsApp_Pexeso
         {
             for (int i = 0; i < entityList.Length; i++)
             {
-                this.entityList[i].setEnable(boolean);
+                this.entityList[i].SetEnable(boolean);
             }
         }
 
@@ -389,7 +389,7 @@ namespace WindowsFormsApp_Pexeso
             this.element.TextAlign = ContentAlignment.MiddleCenter;
             this.element.AutoSize = false;
             this.element.TabIndex = 4;
-            this.element.Text = "Otoc me!";
+            this.element.Text = "Turn me around";
             this.element.Left = this.left;
             this.element.Top = this.top;
             this.element.Click += new System.EventHandler(this.ProcessClick);
@@ -414,13 +414,13 @@ namespace WindowsFormsApp_Pexeso
                 if (this.isShown)
                 {
                     this.TurnUpSideUp();
-                    this.game.ProcessClick(this.GetColor(), this);
+                    this.game.ProcessClick(this);
                 }
             }
 
         }
 
-        public void setEnable(bool boolean)
+        public void SetEnable(bool boolean)
         {
             this.isEnabled = boolean;
         }
@@ -433,7 +433,7 @@ namespace WindowsFormsApp_Pexeso
         public void TurnBackSideUp()
         {
             this.element.BackColor = System.Drawing.Color.DarkGray;
-            this.element.Text = "Otoc me!";
+            this.element.Text = "Turn me around";
         }
 
         public string GetColor()
@@ -441,6 +441,4 @@ namespace WindowsFormsApp_Pexeso
             return color;
         }
     }
-
-    
 }

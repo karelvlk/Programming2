@@ -67,7 +67,7 @@ namespace WindowsFormsApp_Pexeso
             this.startButton.Size = new System.Drawing.Size(300, 111);
             this.startButton.TabIndex = 1;
             this.startButton.Text = "START GAME";
-            this.startButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.startButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.startButton.UseVisualStyleBackColor = false;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
